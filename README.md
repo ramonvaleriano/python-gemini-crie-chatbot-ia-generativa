@@ -1,0 +1,1 @@
+# python-gemini-crie-chatbot-ia-generativa
