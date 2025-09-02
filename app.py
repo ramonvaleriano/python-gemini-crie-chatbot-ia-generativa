@@ -1,20 +1,17 @@
 from flask import Flask,render_template, request, Response
-import google.generativeai as genai
-from dotenv import load_dotenv
-import os
+from flask_cors import CORS
 
-load_dotenv()
-
-CHAVE_API_GOOGLE = os.getenv("GEMINI_API_KEY")
-MODELO_ESCOLHIDO = os.getenv("MODELO_ESCOLHIDO")
-genai.configure(api_key=CHAVE_API_GOOGLE)
+from service.bot import bot
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'alura'
 
-# @app.route("/chat", methods=["POST"])
-# def chat():
-#     prompt = request.json["msg"]
+@app.route("/chat", methods=["POST"])
+def chat():
+    prompt = request.json["msg"]
+    resposta = bot(prompt)
+    return resposta
 
 @app.route("/")
 def home():
