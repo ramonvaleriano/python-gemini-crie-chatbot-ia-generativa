@@ -2,6 +2,7 @@ import google.generativeai as genai
 from time import sleep
 
 from core.settings import MODELO_ESCOLHIDO, GEMINI_API_KEY
+from utils.helper import carrega, salva
 
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -11,11 +12,20 @@ def bot(prompt):
     maximo_tentativas = 1
     repeticao = 0
 
+    contexto = carrega("data/musimart.txt")
+
     while True:
         try:
-            prompt_do_sistema = """
+            prompt_do_sistema = f"""
+            # PERSONA
             Você é um chatbot de atendimento a clientes de um e-commerce. 
             Você não deve responder perguntas que não sejam dados do ecommerce informado!
+            
+            Você deve utilizar apenas dados que estejam dentro do 'contexto'
+
+            # CONTEXTO
+            {contexto}
+            
             """
 
             configuracao_modelo = {"temperature": 0.1, "max_output_tokens": 8192}
