@@ -2,6 +2,7 @@ import google.generativeai as genai
 from time import sleep
 
 from core.settings import MODELO_ESCOLHIDO, GEMINI_API_KEY
+from utils.selecionar_persona import personas
 from utils.helper import carrega, salva
 
 
@@ -16,6 +17,8 @@ def bot(prompt):
 
     while True:
         try:
+            personalidade = personas["negativo"]
+
             prompt_do_sistema = f"""
             # PERSONA
             Você é um chatbot de atendimento a clientes de um e-commerce. 
@@ -26,6 +29,8 @@ def bot(prompt):
             # CONTEXTO
             {contexto}
             
+            # PERSONALIDADE
+            {personalidade}
             """
 
             configuracao_modelo = {"temperature": 0.1, "max_output_tokens": 8192}
