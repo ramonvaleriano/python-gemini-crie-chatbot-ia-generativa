@@ -4,6 +4,7 @@ from utils.selecionar_persona import personas
 from utils.helper import carrega, salva
 
 from service.google_genai import GoogleGenai
+from service.selecionar_persona import SelecionarPersona
 
 
 def bot(prompt):
@@ -14,7 +15,9 @@ def bot(prompt):
 
     while True:
         try:
-            personalidade = personas["negativo"]
+            sentimento = SelecionarPersona().selecionar_persona(message_user=prompt)
+            print(f"Sentimento gerado {sentimento}")
+            personalidade = personas[sentimento]
 
             prompt_do_sistema = f"""
             # PERSONA
