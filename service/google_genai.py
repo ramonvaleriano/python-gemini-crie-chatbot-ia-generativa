@@ -1,0 +1,35 @@
+import google.generativeai as genai
+from core.settings import MODELO_ESCOLHIDO, GEMINI_API_KEY
+
+genai.configure(api_key=GEMINI_API_KEY)
+
+
+class GoogleGenai:
+    def __init__(self, system_inproduction=None, generation_config=None):
+        self.system_inproduction = system_inproduction
+        self.__modelo_escolhido = MODELO_ESCOLHIDO
+        self.__generation_config = generation_config
+        self.llm = self.__set_generative_model()
+
+    def __set_generative_model(self):
+        print("\n")
+        if self.__generation_config:
+            print("Configurando Modelo com Congfiguração Generativa")
+            return genai.GenerativeModel(
+                model_name=self.__modelo_escolhido,
+                system_instruction=self.system_inproduction,
+                generation_config=self.__generation_config,
+            )
+
+        print("Configurando Modelo sem Configuração Generativa")
+        return genai.GenerativeModel(
+            model_name=self.__modelo_escolhido,
+            system_instruction=self.system_inproduction,
+        )
+
+    def context_response(self, context):
+        print("\n")
+        print("Enviando pergunta")
+        response = self.llm.generate_content(context)
+        print("Resposta coletada")
+        return response
