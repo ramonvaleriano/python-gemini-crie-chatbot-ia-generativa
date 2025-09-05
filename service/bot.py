@@ -1,12 +1,9 @@
-import google.generativeai as genai
 from time import sleep
 
-from core.settings import MODELO_ESCOLHIDO, GEMINI_API_KEY
 from utils.selecionar_persona import personas
 from utils.helper import carrega, salva
 
-
-genai.configure(api_key=GEMINI_API_KEY)
+from service.google_genai import GoogleGenai
 
 
 def bot(prompt):
@@ -34,15 +31,14 @@ def bot(prompt):
             """
 
             configuracao_modelo = {"temperature": 0.1, "max_output_tokens": 8192}
+
             print("\nPreparando para envio para a GEMINI")
-            llm = genai.GenerativeModel(
-                model_name=MODELO_ESCOLHIDO,
-                system_instruction=prompt_do_sistema,
+            llm_genai = GoogleGenai(
+                system_inproduction=prompt_do_sistema,
                 generation_config=configuracao_modelo,
             )
-            print("\nEnviando Pergunta")
-            resposta = llm.generate_content(prompt)
-            print("Resposta coletada")
+            resposta = llm_genai.context_response(context=prompt)
+
             return resposta.text
 
         except Exception as erro:
