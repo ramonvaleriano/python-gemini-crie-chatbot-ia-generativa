@@ -1,5 +1,6 @@
 from time import sleep
 
+from utils.data_selection import DataSelection
 from utils.selecionar_persona import personas
 from utils.helper import carrega, salva
 
@@ -8,6 +9,7 @@ from service.selecionar_persona import SelecionarPersona
 
 
 contexto = carrega("data/musimart.txt")
+
 
 def cria_chatbot():
     personalidade = "neutro"
@@ -36,12 +38,14 @@ def cria_chatbot():
         system_inproduction=prompt_do_sistema,
         generation_config=configuracao_modelo,
     )
-    
+
     chatbot = llm_genai.llm.start_chat(history=[])
 
     return chatbot
 
+
 chatbot = cria_chatbot()
+
 
 def bot(prompt):
     maximo_tentativas = 1
@@ -61,6 +65,17 @@ def bot(prompt):
             """
 
             response = chatbot.send_message(mwensagem_usuario)
+
+            data_selection = DataSelection()
+            chatbot.history = data_selection.remove_history(
+                remove_quantity=2, minimum_quantity=10, history=chatbot.history
+            )
+
+            history_chatbot = chatbot.history
+
+            print("Analise de histórico de conversa: ")
+            print(f"Quantidade: {len(history_chatbot)}")
+            print(f"Histórico: {history_chatbot}")
 
             return response.text
 
