@@ -39,7 +39,7 @@ def cria_chatbot():
         generation_config=configuracao_modelo,
     )
 
-    chatbot = llm_genai.llm.start_chat(history=[])
+    chatbot = llm_genai.chatbot()
 
     return chatbot
 
