@@ -5,11 +5,12 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 
 class GoogleGenai:
-    def __init__(self, system_inproduction=None, generation_config=None):
+    def __init__(self, system_inproduction=None, generation_config=None, history=list()):
         self.system_inproduction = system_inproduction
         self.__modelo_escolhido = MODELO_ESCOLHIDO
         self.__generation_config = generation_config
         self.llm = self.__set_generative_model()
+        self.__history = history
 
     def __set_generative_model(self):
         print("\n")
@@ -33,3 +34,8 @@ class GoogleGenai:
         response = self.llm.generate_content(context)
         print("Resposta coletada")
         return response
+    
+    def chatbot(self):
+        chatbot = self.llm.start_chat(history=self.__history)
+
+        return chatbot
