@@ -39,3 +39,14 @@ class GoogleGenai:
         chatbot = self.llm.start_chat(history=self.__history)
 
         return chatbot
+
+class ImageManager:
+    def generating_gemini_image(self, path_image):
+        temporary_file = genai.upload_file(
+            path=path_image,
+            display_name="Imagem Enviada"
+        )
+
+        print(f"Imagem enviada: {temporary_file.uri}")
+
+        return temporary_file

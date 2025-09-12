@@ -9,18 +9,19 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = 'alura'
 
-caminho_imagem_enviada = None
+app.config.setdefault('CAMINHO_IMAGEM_ENVIADA', None)
 UPLOAD_FOLDER = "imagens_temporarias"
 
 @app.route("/upload_imagem", methods=["POST"])
 def upload_imagem():
-    global caminho_imagem_enviada
-
     if "imagem" in request.files:
         imagem_enviada = request.files["imagem"]
         nome_arquivo = str(uuid.uuid4()) + os.path.splitext(imagem_enviada.filename)[1]
         caminho_arquivo = os.path.join(UPLOAD_FOLDER, nome_arquivo)
         imagem_enviada.save(caminho_arquivo)
+
+        app.config['CAMINHO_IMAGEM_ENVIADA'] = caminho_arquivo
+
         return "Imagem enviada com sucesso", 200
     return "Nenhum arquivo enviado", 400
 
