@@ -1,10 +1,11 @@
 from time import sleep
+from flask import current_app
 
 from utils.data_selection import DataSelection
 from utils.selecionar_persona import personas
 from utils.helper import carrega, salva
 
-from service.google_genai import GoogleGenai
+from service.google_genai import GoogleGenai, ImageManager
 from service.selecionar_persona import SelecionarPersona
 
 
@@ -50,6 +51,8 @@ chatbot = cria_chatbot()
 def bot(prompt):
     maximo_tentativas = 1
     repeticao = 0
+    caminho_imagem_enviada = current_app.config.pop('CAMINHO_IMAGEM_ENVIADA', None)
+    print(f"\nTestando o global: {caminho_imagem_enviada}\n")
 
     while True:
         try:
@@ -57,14 +60,28 @@ def bot(prompt):
             print(f"Sentimento gerado {sentimento}")
             personalidade = personas[sentimento]
 
-            mwensagem_usuario = f"""
+            mensagem_usuario = f"""
             Considere está personalidade para responder a mensagem: {personalidade}
 
             responda a seguinte mensagem, sempre lembrando do histórico:
             {prompt}
             """
 
-            response = chatbot.send_message(mwensagem_usuario)
+            if caminho_imagem_enviada:
+                mensagem_usuario = (
+                    "\n Utilize as caracteristicas a imagem em sua resposta"
+                )
+                arquivo_imagem = ImageManager().generating_gemini_image(
+                    caminho_imagem_enviada
+                )
+
+                response = chatbot.send_message([arquivo_imagem, mensagem_usuario])
+                current_app.config['CAMINHO_IMAGEM_ENVIADA'] = None
+                caminho_imagem_enviada = None
+
+            else:
+
+                response = chatbot.send_message(mensagem_usuario)
 
             data_selection = DataSelection()
             chatbot.history = data_selection.remove_history(
