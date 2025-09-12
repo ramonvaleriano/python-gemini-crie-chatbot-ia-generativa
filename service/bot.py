@@ -1,3 +1,4 @@
+import os
 from time import sleep
 from flask import current_app
 
@@ -76,8 +77,9 @@ def bot(prompt):
                 )
 
                 response = chatbot.send_message([arquivo_imagem, mensagem_usuario])
-                current_app.config['CAMINHO_IMAGEM_ENVIADA'] = None
+                os.remove(caminho_imagem_enviada)
                 caminho_imagem_enviada = None
+                current_app.config['CAMINHO_IMAGEM_ENVIADA'] = caminho_imagem_enviada
 
             else:
 
@@ -100,5 +102,9 @@ def bot(prompt):
             repeticao += 1
             if repeticao >= maximo_tentativas:
                 return "Erro no Gemini: %s" % erro
+            
+            if caminho_imagem_enviada:
+                caminho_imagem_enviada = None
+                current_app.config['CAMINHO_IMAGEM_ENVIADA'] = caminho_imagem_enviada
 
             sleep(50)
